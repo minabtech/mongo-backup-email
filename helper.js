@@ -10,8 +10,9 @@ const backupDB = (db, path, cb) => {
     winston.log('info', 'dumping db ...');
     let currentDate = new Date().toGMTString();
     let fileName = currentDate.replace(/[, .*+?^${}()|[\]\\]/g, '')// + '.gzip'
+    let filePath = path.join(path, fileName);
 
-    exec('mongodump --db ' + db + ' --gzip --archive=' + fileName, function (err, stdout, stderr) {
+    exec('mongodump --db ' + db + ' --gzip --archive=' + filePath, function (err, stdout, stderr) {
         return cb(null, fileName);
     });
 }
