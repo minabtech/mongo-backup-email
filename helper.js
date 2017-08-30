@@ -6,11 +6,11 @@ const { exec } = require('child_process');
 const path = require('path');
 const nodemailer = require('nodemailer');
 
-const backupDB = (db, path, cb) => {
+const backupDB = (db, basePath, cb) => {
     winston.log('info', 'dumping db ...');
     let currentDate = new Date().toGMTString();
     let fileName = currentDate.replace(/[, .*+?^${}()|[\]\\]/g, '')// + '.gzip'
-    let filePath = path.join(path, fileName);
+    let filePath = path.join(basePath, fileName);
 
     exec('mongodump --db ' + db + ' --gzip --archive=' + filePath, function (err, stdout, stderr) {
         return cb(null, fileName);
@@ -50,13 +50,13 @@ const emailSender = (data, cb) => {
     });
 }
 module.exports = {
-    backup: (db, path, email, password, project) => {
+    backup: (db, basePath, email, password, project) => {
         winston.log('info', 'sending email ...');
-        backupDB(db, path, function (err, fileName) {
+        backupDB(db, basePath, function (err, fileName) {
             emailSender({
                 email: email,
                 password: password,
-                path: path,
+                path: basePath,
                 fileName: fileName,
                 subject: project + ' ' + fileName
             }, function (err, info) { })
