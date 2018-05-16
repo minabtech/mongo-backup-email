@@ -1,20 +1,19 @@
 ﻿module.exports = [
-    {
-        email: "",
-        password: "",
+  {
+    email: "",
+    password: "",
 
-        db: "",
-        path: "./",
-        project: "",
+    db: "",
+    path: "./",
+    project: "",
 
-
-        schedules: [
-            {
-                second: 10,
-                minute: null,
-                date: null,
-                hour: null
-            }
-        ]
-    }
-]
+    schedules: [
+      {
+        second: 10,
+        minute: null,
+        date: null,
+        hour: null
+      }
+    ]
+  }
+];

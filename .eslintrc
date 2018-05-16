@@ -1,0 +1,8 @@
+{
+  "extends": ["eslint-config-airbnb-base", "plugin:prettier/recommended"],
+  "rules": {
+    "func-names": 0,
+    "no-param-reassign": 0,
+    "no-restricted-syntax": ["error", "no-iterator"]
+  }
+}
