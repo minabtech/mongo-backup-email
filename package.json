@@ -4,14 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "node node_modules/eslint/bin/eslint --fix .",
+    "start": "npm run lint && node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cron-parser": "^2.5.0",
     "node-fs": "^0.1.7",
     "node-schedule": "^1.2.4",
     "nodemailer": "^4.0.1",
     "winston": "^2.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-import": "2.7.0",
+    "eslint-plugin-prettier": "^2.6.0",
+    "nsp": "^2.1.0",
+    "prettier": "^1.12.1"
   }
 }
