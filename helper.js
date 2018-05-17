@@ -11,21 +11,32 @@ const nodemailer = require("nodemailer");
  * Generates dump file name with the current time stamp
  * @param {String} project  project name
  * @param {String} db data base name
+ * @param {Date} timestamp  time
  * @param {String} ext file name extension defaults to 'gzip'
  */
-const buildFileName = (project, db, ext = "gzip") => {
-  const now = new Date();
-  const date = now.toISOString().substr(0, 10);
-  const time = now
-    .toTimeString()
-    .substr(0, 8)
-    .replace(/:/g, "-");
-  return `${project}-${db}-${date}-${time}.${ext}`;
+const buildFileName = (project, db, timestamp, ext = "gzip") => {
+  const date = timestamp
+    .toString()
+    .substr(0, 15)
+    .replace(/ /g, "-");
+  const time = timestamp.toTimeString().substr(0, 8);
+  return `${project}-${db}-${date}-${time}.${ext}`.toLowerCase();
+};
+/**
+ * Generates subject
+ * @param {String} project  project name
+ * @param {String} db data base name
+ * @param {Date} timestamp  time
+ */
+const buildSubject = (project, db, timestamp) => {
+  const date = timestamp.toString().substr(0, 15);
+  const time = timestamp.toTimeString().substr(0, 5);
+  return `${project} ${db} ${date} ${time}`;
 };
 
-const backupDB = (project, db, basePath, cb) => {
+const backupDB = (project, db, basePath, timestamp, cb) => {
   winston.log("info", "dumping db ...");
-  const fileName = buildFileName(project, db);
+  const fileName = buildFileName(project, db, timestamp);
   const filePath = path.join(basePath, fileName);
   exec(`mongodump --db ${db} --gzip --archive=${filePath}`, () =>
     cb(null, fileName)
@@ -67,16 +78,25 @@ const emailSender = (data, cb) => {
 module.exports = {
   backup: (db, basePath, email, password, project) => {
     winston.log("info", "sending email ...");
-    backupDB(project, db, basePath, (err, fileName) => {
+    const timestamp = new Date();
+    const subject = buildSubject(project, db, timestamp);
+    backupDB(project, db, basePath, timestamp, (err, fileName) => {
       emailSender(
         {
           email,
           password,
-          path: basePath,
+          subject,
           fileName,
-          subject: `${project} ${fileName}`
+          path: basePath
         },
-        () => {}
+        (err, info) => {
+          if (err) {
+            winston.log("error", err);
+          }
+          if (info) {
+            winston.log("info", "Email sent");
+          }
+        }
       );
     });
   }
